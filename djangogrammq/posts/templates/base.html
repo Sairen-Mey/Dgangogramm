@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  {%load static%}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}{% endblock %}</title>
+  {% block head %}
+    <link rel="stylesheet" href="{%static 'css/style.css'%}">
+  {% endblock %}
+</head>
+<body>
+  <header>
+    {% block header%}
+  </header>
+    <nav>
+      <ul>
+        <li><a href="{%url 'registration'%}">Registration</a></li>
+        <li><a href="{%url 'login'%}">Login</a></li>
+        <li><a href="{%url 'home'%}">Home</a></li>
+        <li><a href="create_post/">Create post</a></li>
+      </ul>
+    </nav>
+  <main>
+  {% block content %}{% endblock %}
+  </main>
+</body>
+</html>

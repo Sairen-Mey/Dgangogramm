@@ -1,0 +1,57 @@
+{% block title %}
+Home
+{% endblock %}
+{% block header %}
+<h1>Home</h1>
+{% endblock %}
+{% block content %}
+<div class="profile">
+  <img src="avatars/Без названия (3).jfif" alt="User Avatar" class="profile-avatar">
+  <div class="profile-info">
+      {%if user.avatar%}
+      <img src="{{user.avatar.url}}" alt="avatar" width="150">
+      {%endif%}
+      {%if user.full_name%}
+      <h2 class="profile-username">{{ user.full_name }}</h2>
+      {%endif%}
+      <h2 class="profile-email">{{ user.email }}</h2>
+      {%if user.bio%}
+      <h2 class="profile-bio">{{ user.bio }}</h2>
+      {%endif%}
+      <div class="profile-stats">
+          <span>Підписники: <strong>250</strong></span>
+          <span>Підписані на: <strong>180</strong></span>
+          <span>Лайки: <strong>3200</strong></span>
+      </div>
+  </div>
+</div>
+
+
+
+
+
+
+  <div class="post">
+    <div class="user-info">
+        <img src="avatars/Без названия (3).jfif" alt="User Avatar" class="avatar">
+        <span class="username">{{ user.username }}</span>
+        <span class="post-date">03.02.2025</span>
+    </div>
+
+    <div class="post-content">
+        <p class="post-text">Нова гра вже вийшла! Кожен може спробувати (якщо заплатить)</p>
+        <img src="images/starfield-12.webp" alt="Post Image" class="post-image">
+    </div>
+    <div class="post-tags">
+        <span>#2024</span>
+        <span>#Starfield</span>
+        <span>#НовіІгри</span>
+    </div>
+    <div class="post-actions">
+        <button class="like-btn">❤️</button>
+        <button class="repost-btn">🔁</button>
+        <button class="comment-btn">💬</button>
+    </div>
+</div>
+
+{% endblock %}

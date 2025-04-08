@@ -1,9 +1,14 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.template import loader, Template
 from django.http import HttpResponse
-from .forms import RegisterForm, LoginForm
+from .forms import RegisterForm, LoginForm, PostForm
 from django.contrib import messages
 from django.contrib.auth import authenticate, login
+from django.contrib.auth.decorators import login_required
+from .models import User, Post, Image
+from django.views.generic.edit import CreateView
+from django.urls import reverse_lazy
+
 
 def registration(request):
     if request.method == 'POST':
@@ -11,7 +16,7 @@ def registration(request):
         if form.is_valid():
             form.save()
             messages.success(request, 'Account create')
-            return redirect('example')
+            return redirect('home')
         else:
             messages.error(request, 'Edit your request on the form')
     else:
@@ -27,6 +32,12 @@ def example(request):
     return HttpResponse(template.render(context))
 
 
+@login_required
+def home(request):
+    user = get_object_or_404(User, email=request.user.email)
+    return render(request, 'home.html', {'user': user})
+
+
 def login_view(request):
     if request.method == 'POST':
         form = LoginForm(request.POST)
@@ -34,7 +45,7 @@ def login_view(request):
             user = form.user
             login(request, user)
             messages.success(request, 'login is cool')
-            return redirect('example')
+            return redirect('home')
         else:
             messages.error(request, 'date is wrong')
     else:
@@ -42,25 +53,21 @@ def login_view(request):
     return render(request,'login.html', {'form': form})
 
 
-def index(request):
-    """View function for home page of site."""
+def post_list(request):
+    posts = Post.objects.all().order_by('-created_at')
+    return render(request, 'post_list.html', {'posts': posts})
 
-    # Generate counts of some of the main objects
-    num_books = Book.objects.all().count()
-    num_instances = BookInstance.objects.all().count()
 
-    # Available books (status = 'a')
-    num_instances_available = BookInstance.objects.filter(status__exact='a').count()
+class PostCreateView(CreateView):
+    model = Post
+    form_class = PostForm
+    template_name = 'create_post.html'
+    success_url = reverse_lazy('create_post')
 
-    # The 'all()' is implied by default.
-    num_authors = Author.objects.count()
-
-    context = {
-        'num_books': num_books,
-        'num_instances': num_instances,
-        'num_instances_available': num_instances_available,
-        'num_authors': num_authors,
-    }
-
-    # Render the HTML template index.html with the data in the context variable
-    return render(request, 'index.html', context=context)
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        files = form.cleaned_data.get('images')
+        if files:
+            for f in files:
+                Image.objects.create(post=self.object, image=f)
+        return response

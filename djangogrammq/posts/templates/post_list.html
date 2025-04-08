@@ -1,0 +1,7 @@
+<h2>Список постів</h2>
+<ul>
+    {% for post in posts %}
+        <li><strong>{{ post.title }}</strong> - {{ post.created_at }}</li>
+    {% endfor %}
+</ul>
+<a href="{% url 'create_post' %}">Додати пост</a>
